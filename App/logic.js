@@ -127,9 +127,8 @@ $(document).ready(function () {
   //Button starts the game
   $("#startGame").on("click", function () {
     console.log("Game Started");
-    $("#screen").empty();
-    //Making the game board
 
+    //Making the game board
     createBoard(deck);
   });
   //Funciton for getting cards off the hit button
@@ -149,6 +148,7 @@ $(document).ready(function () {
 
 //Function for creating the board
 createBoard = (deck) => {
+  $("#screen").empty();
   //Where players cards will be shown
   let playerCards = $("<div>Player Div</div>");
   playerCards.attr("id", "playerCards");
@@ -172,6 +172,8 @@ createBoard = (deck) => {
   $("#controlContainer").append(stand);
   $("#controlContainer").append(restart);
 
+  drawCard(deck, "player");
+  drawCard(deck, "dealer");
   drawCard(deck, "player");
   drawCard(deck, "dealer");
 };
@@ -226,7 +228,13 @@ youWin = () => {
   resetGame();
 };
 //Function for reseting the game
-resetGame = () => {};
+resetGame = () => {
+  playerTotal = 0;
+  dealerTotal = 0;
+  deck = [...masterDeck];
+
+  createBoard(deck);
+};
 
 putCardOnScreen = (cardImgSrc, pOrD) => {
   console.log(pOrD);
