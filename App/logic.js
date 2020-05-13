@@ -135,13 +135,15 @@ $(document).ready(function () {
   //Funciton for getting cards off the hit button
   $(document).on("click", "#hit", function () {
     console.log("hit");
-    drawCard(deck);
+    drawCard(deck, "player");
   });
   $(document).on("click", "#restart", function () {
     console.log("restart clicked");
+    resetGame();
   });
   $(document).on("click", "#stand", function () {
     console.log("stand clicked");
+    stand();
   });
 });
 
@@ -170,15 +172,20 @@ createBoard = (deck) => {
   $("#controlContainer").append(stand);
   $("#controlContainer").append(restart);
 
-  drawCard(deck);
-  drawCard(deck);
+  drawCard(deck, "player");
+  drawCard(deck, "dealer");
 };
 
-drawCard = (deck) => {
+//Think about how to make this work for both player and dealer
+drawCard = (deck, pOrD) => {
   //Getting and then removing the card form the deck
+  //STILL NEED TO POP CARD THAT WAS DRAWN OUT OF DECK
 
   var cardPosition = Math.floor(deck.length * Math.random());
-  var cardValue = deck[cardPosition];
+  var cardArray = deck[cardPosition];
+
+  var cardValue = cardArray[1];
+  var cardImgSrc = cardArray[2];
 
   console.log(
     "This is the card position in the deck: " +
@@ -187,17 +194,53 @@ drawCard = (deck) => {
       cardValue
   );
 
-  //Displaying the card to the screen
-  let cardToDisplay = $("<div></div>");
-
-  //Checking to see if player has lost the game
-  playerTotal += cardValue[1];
-  if (playerTotal > 21) {
-    youLose();
+  //Check to see if its player or dealer drawing card
+  if (pOrD === "player") {
+    putCardOnScreen(cardImgSrc, "p");
+    //Checking to see if player has lost the game
+    playerTotal += cardValue;
+    if (playerTotal > 21) {
+      youLose();
+    }
+  } else {
+    putCardOnScreen(cardImgSrc, "d");
+    //Checking if dealer lost game
+    if (dealerTotal > playerTotal && dealerTotal < 21) {
+      youLose();
+    }
   }
 };
 
-//Function for losing
+//Function to calculate who wins on stand
+stand = () => {};
+//Function for Losing
 youLose = () => {
-  alert("You lost the game");
+  //Placeholder
+  alert("You lost the game...");
+  resetGame();
+};
+//Function for Wining
+youWin = () => {
+  //PlaceHolder
+  alert("You win the game!");
+  resetGame();
+};
+//Function for reseting the game
+resetGame = () => {};
+
+putCardOnScreen = (cardImgSrc, pOrD) => {
+  console.log(pOrD);
+  //Displaying the card to the screen
+  //   let cardDisplay = $("<div></div>");
+  //   cardDisplay.attr("id", "cardDisplay");
+  let cardImage = $("<image src=" + cardImgSrc + "></image>");
+  cardImage.attr("class", "cardImage");
+  if (pOrD == "p") {
+    // $("#playerCards").append(cardDisplay);
+    $("#playerCards").append(cardImage);
+  } else if (pOrD == "d") {
+    console.log("we are here");
+    // $("#dealerCards").append(cardDisplay);
+    $("#dealerCards").append(cardImage);
+  }
 };
