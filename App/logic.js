@@ -58,7 +58,7 @@ var sKing = "images/KingSpade.png";
 
 //Master copy of deck for starting new games
 const masterDeck = [
-  ["AceSpade", [1, 11], sAce],
+  ["AceSpade", 1, sAce],
   ["TwoSpade", 2, sTwo],
   ["ThreeSpade", 3, sThree],
   ["FourSpade", 4, sFour],
@@ -71,7 +71,7 @@ const masterDeck = [
   ["JackSpade", 10, sJack],
   ["QueenSpade", 10, sQueen],
   ["KingSpade", 10, sKing],
-  ["AceClub", [1, 11], cAce],
+  ["AceClub", 1, cAce],
   ["TwoClub", 2, cTwo],
   ["ThreeClub", 3, cThree],
   ["FourClub", 4, cFour],
@@ -84,7 +84,7 @@ const masterDeck = [
   ["JackClub", 10, cJack],
   ["QueenClub", 10, cQueen],
   ["KingClub", 10, cKing],
-  ["AceHeart", [1, 11], hAce],
+  ["AceHeart", 1, hAce],
   ["TwoHeart", 2, hTwo],
   ["ThreeHeart", 3, hThree],
   ["FourHeart", 4, hFour],
@@ -97,7 +97,7 @@ const masterDeck = [
   ["JackHeart", 10, hJack],
   ["QueenHeart", 10, hQueen],
   ["KingHeart", 10, hKing],
-  ["AceDiamond", [1, 11], dAce],
+  ["AceDiamond", 1, dAce],
   ["TwoDiamond", 2, dTwo],
   ["ThreeDiamond", 3, dThree],
   ["FourDiamond", 4, dFour],
@@ -173,7 +173,6 @@ createBoard = (deck) => {
   $("#controlContainer").append(restart);
 
   drawCard(deck, "player");
-  drawCard(deck, "dealer");
   drawCard(deck, "player");
   drawCard(deck, "dealer");
 };
@@ -189,12 +188,12 @@ drawCard = (deck, pOrD) => {
   var cardValue = cardArray[1];
   var cardImgSrc = cardArray[2];
 
-  console.log(
-    "This is the card position in the deck: " +
-      cardPosition +
-      "\nThis is is the value: " +
-      cardValue
-  );
+  //   console.log(
+  //     "This is the card position in the deck: " +
+  //       cardPosition +
+  //       "\nThis is is the value: " +
+  //       cardValue
+  //   );
 
   //Check to see if its player or dealer drawing card
   if (pOrD === "player") {
@@ -202,30 +201,56 @@ drawCard = (deck, pOrD) => {
     //Checking to see if player has lost the game
     playerTotal += cardValue;
     if (playerTotal > 21) {
+      console.log("First conditional");
       youLose();
     }
   } else {
     putCardOnScreen(cardImgSrc, "d");
     //Checking if dealer lost game
-    if (dealerTotal > playerTotal && dealerTotal < 21) {
+    dealerTotal += cardValue;
+    if (dealerTotal > playerTotal && dealerTotal < 21 && dealerTotal > 10) {
+      console.log("Second conditional");
       youLose();
     }
   }
+  console.log(
+    "playerTotal after drawing card: " +
+      playerTotal +
+      "\ndealerTotal after drawing card: " +
+      dealerTotal
+  );
 };
 
 //Function to calculate who wins on stand
-stand = () => {};
+stand = () => {
+  drawCard(deck, "dealer");
+
+  if (dealerTotal > playerTotal && dealerTotal < 22) {
+    youLose();
+  } else if (dealerTotal > 21) {
+    youWin();
+  } else {
+    window.setTimeout(function () {
+      stand();
+    }, 1000);
+  }
+};
 //Function for Losing
 youLose = () => {
+  console.log("In lose game function");
   //Placeholder
   alert("You lost the game...");
-  resetGame();
+  window.setTimeout(function () {
+    resetGame();
+  }, 3000);
 };
 //Function for Wining
 youWin = () => {
   //PlaceHolder
   alert("You win the game!");
-  resetGame();
+  window.setTimeout(function () {
+    resetGame();
+  }, 3000);
 };
 //Function for reseting the game
 resetGame = () => {
@@ -237,7 +262,6 @@ resetGame = () => {
 };
 
 putCardOnScreen = (cardImgSrc, pOrD) => {
-  console.log(pOrD);
   //Displaying the card to the screen
   //   let cardDisplay = $("<div></div>");
   //   cardDisplay.attr("id", "cardDisplay");
@@ -247,7 +271,6 @@ putCardOnScreen = (cardImgSrc, pOrD) => {
     // $("#playerCards").append(cardDisplay);
     $("#playerCards").append(cardImage);
   } else if (pOrD == "d") {
-    console.log("we are here");
     // $("#dealerCards").append(cardDisplay);
     $("#dealerCards").append(cardImage);
   }
